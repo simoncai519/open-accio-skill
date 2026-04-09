@@ -1,73 +1,45 @@
 ---
 name: amz-hot-keywords
-description: Retrieve Amazon hot‑search keywords and their rank trends from AMZ123 (Amazon Brand Analytics)
+description: "Scrape Amazon Brand Analytics (ABA) weekly hot keyword rankings from AMZ123 and return structured keyword trend data. Use when the user asks about Amazon keyword rankings, hot search terms, keyword trends, ABA data, or wants a CSV/JSON of popular Amazon search terms. Trigger phrases include: 'hot keywords', 'search term rank', 'keyword trend', 'Amazon keyword', 'ABA data', '热搜词', '关键词排名', '关键词趋势'."
 ---
 
-# Amazon Hot Keywords
+# Amazon Hot Keywords Skill
 
 ## Overview
-This skill pulls the weekly Amazon Brand Analytics (ABA) hot‑keyword list from the public AMZ123 portal. It returns a CSV where each row contains the search term, the current week’s rank, the previous week’s rank, and a simple trend indicator (up, down, flat, new).
+This skill extracts weekly search‑term rankings from Amazon Brand Analytics via the public AMZ123 site. It returns a CSV (or JSON) containing the keyword, current week rank, last week rank, and trend (up/down/flat/new).
 
-## Core Workflows
-1. **Navigate** – Build a URL to AMZ123’s US top‑keywords page with the user‑provided query.
-2. **Scrape** – Launch a head‑less Chrome instance via Selenium, wait for the keyword table to load, and harvest up to 200 entries using a set of fallback CSS selectors.
-3. **Calculate Trend** – Compare the current rank with the last‑week rank to label the movement.
-4. **Persist** – Write the results to a timestamped CSV file under the chosen output directory.
-5. **Report** – Emit a short JSON summary (keyword, total rows, CSV path, sample rows) for downstream agents.
+## Core Workflow
+1. User provides a base keyword.
+2. `scripts/amz_scraper.py` launches a headless Selenium Chrome session, navigates to AMZ123, searches the keyword, and scrapes up to 200 related terms.
+3. The script calculates the trend by comparing the current rank with the previous week’s rank.
+4. Results are saved to `amz123_hotwords_<keyword>_<timestamp>.csv` (or `.json`).
+5. The file path is returned to the caller.
 
 ## Usage
 ```bash
-python3 $(pwd)/scripts/amz_scraper.py --keyword "<your term>" [options]
-```
+# Basic usage – CSV output
+python3 $(pwd)/scripts/amz_scraper.py --keyword "dog bed"
 
+# Limit results to 100 entries and specify output folder
+python3 $(pwd)/scripts/amz_scraper.py \
+    --keyword "yoga mat" \
+    --max-results 100 \
+    --output-dir ./data
+```
 ### Parameters
-| Parameter | Required | Description | Example |
-|-----------|----------|-------------|---------|
-| `--keyword` | Yes | The seed term to query on AMZ123. | `--keyword "dog bed"` |
-| `--max-results` | No | Upper limit of records to retrieve (default 200). | `--max-results 100` |
-| `--output-dir` | No | Destination folder for the CSV (default current directory). | `--output-dir ./data` |
-| `--headless` | No | Run Chrome headless (`true`/`false`, default `true`). | `--headless false` |
+| Flag | Required | Description | Default |
+|------|----------|-------------|---------|
+| `--keyword` | Yes | Search term to seed the scrape | - |
+| `--max-results` | No | Max number of keywords to collect (max 200) | 200 |
+| `--output-dir` | No | Directory for the CSV/JSON file | current directory |
+| `--format` | No | `csv` or `json` (default `csv`) |
+| `--headless` | No | Run Chrome headlessly (`true`/`false`) | true |
 
-## Output
-The script creates a file named:
-```
-amz123_hotwords_<keyword>_<YYYYMMDD>_<HHMMSS>.csv
-```
-with columns:
-- **search_term** – The keyword being tracked.
-- **current_rank** – Rank for the current week.
-- **last_rank** – Rank for the previous week (0 if not present).
-- **trend** – One of `up`, `down`, `flat`, or `new`.
+## References
+- See `references/workflow.md` for a step‑by‑step guide and troubleshooting tips.
+- See `references/output.md` for the exact CSV column order and JSON schema.
 
-## Examples
-```bash
-# Basic request
-python3 scripts/amz_scraper.py --keyword "yoga mat"
+## Scripts
+The scraper implementation lives in `scripts/amz_scraper.py`.
 
-# Limited to 50 results, store in ./results, run with a visible browser
-python3 scripts/amz_scraper.py \
-  --keyword "pet supplies" \
-  --max-results 50 \
-  --output-dir ./results \
-  --headless false
-```
-Both commands will output a CSV and print a JSON block like:
-```json
-{
-  "keyword": "yoga mat",
-  "total": 123,
-  "csv": "./amz123_hotwords_yoga_mat_20240409_191200.csv",
-  "sample": [
-    {"search_term":"yoga mat","current_rank":5,"last_rank":7,"trend":"up"},
-    ...
-  ]
-}
-```
-
-## Troubleshooting
-- **Empty CSV** – The site may have changed; inspect `debug_page.html` (saved alongside the script) for missing elements.
-- **Selector errors** – Update the selector lists in `scripts/amz_scraper.py` under the `SELECTORS` constant.
-- **Chrome launch failures** – Verify Chrome is installed; Selenium 4.6+ bundles the driver automatically.
-- **Rate‑limit or CAPTCHA** – Reduce request frequency or run with `--headless false` to manually solve challenges.
-
-For persistent issues, consider filing a bug upstream with a snapshot of the HTML and the script version.
+---

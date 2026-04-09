@@ -1,244 +1,137 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Reimplemented scraper for AMZ123 US Top Keywords.
-It fetches Amazon Brand Analytics weekly rankings via the public AMZ123 interface.
-Outputs a CSV containing the search term, this week's rank, prior week's rank, and a trend indicator.
-"""
-
+import argparse
 import os
 import sys
-import json
 import time
-import argparse
-from datetime import datetime
+import datetime
+import random
+from pathlib import Path
 
 import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
-BASE_URL = "https://www.amz123.com/usatopkeywords"
-
-# CSS selectors used to locate elements. Multiple fallbacks increase resilience to site redesigns.
+# -------------------- Configuration --------------------
 SELECTORS = {
-    "container": [
-        ".table-body-item",
-        ".hotword-item",
-        ".keyword-item",
-        "[class*='table-body'] > div",
-    ],
-    "term": [
-        ".table-body-item-words-word",
-        ".table-body-item-word",
-        "[class*='word']",
-    ],
-    "rank": [
-        ".table-body-item-rank",
-        "[class*='rank']",
-    ],
-}
-
-
-def evaluate_trend(this_week: int, last_week: int) -> str:
-    """Derive a simple trend label.
-
-    lower numeric rank = higher popularity.
-    "new" indicates the term was absent last week.
-    "up" means the rank improved (numerically lower), "down" the opposite, and "flat" unchanged.
-    """
-    if last_week == 0:
-        return "new"
-    if this_week < last_week:
-        return "up"
-    if this_week > last_week:
-        return "down"
-    return "flat"
-
-
-def launch_browser(headless: bool = True) -> webdriver.Chrome | None:
-    opts = Options()
-    if headless:
-        opts.add_argument("--headless=new")
-    opts.add_argument("--no-sandbox")
-    opts.add_argument("--disable-dev-shm-usage")
-    opts.add_argument("--disable-gpu")
-    opts.add_argument("--window-size=1920,1080")
-    opts.add_argument(
-        "--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
-    )
-    try:
-        return webdriver.Chrome(options=opts)
-    except Exception as exc:
-        print(f"[ERROR] Chrome launch failed: {exc}", file=sys.stderr)
-        print("[HINT] Ensure Chrome is installed; Selenium 4.6+ bundles the driver.", file=sys.stderr)
-        return None
-
-
-def try_select(driver, selectors):
-    """Return the first non‑empty result set for a list of CSS selectors."""
-    for sel in selectors:
-        try:
-            elems = driver.find_elements(By.CSS_SELECTOR, sel)
-            if elems:
-                return elems, sel
-        except Exception:
-            continue
-    return [], None
-
-
-def harvest_keywords(driver, limit: int = 200) -> list[dict]:
-    """Extract raw keyword data from the page.
-    Attempts a JavaScript based bulk fetch first; falls back to element‑by‑element parsing.
-    """
-    # JS bulk extraction using the first term and container selectors
-    for term_sel in SELECTORS["term"]:
-        for cont_sel in SELECTORS["container"]:
-            script = f"""
-            const items = Array.from(document.querySelectorAll('{cont_sel}'));
-            return items.slice(0, {limit}).map(item => {{
-              const termElem = item.querySelector('{term_sel}');
-              const term = termElem ? termElem.textContent.trim() : '';
-              const rankBox = item.querySelector('{SELECTORS['rank'][0]}');
-              let cur = 0, prev = 0;
-              if (rankBox) {{
-                const spans = rankBox.querySelectorAll('span');
-                if (spans.length >= 2) {{
-                  const c = spans[0].textContent.trim();
-                  const p = spans[1].textContent.trim();
-                  cur = /^\\d+$/.test(c) ? parseInt(c) : 0;
-                  prev = /^\\d+$/.test(p) ? parseInt(p) : 0;
-                }}
-              }}
-              return {{ term, cur, prev }};
-            }});
-            """
-            try:
-                data = driver.execute_script(script)
-                filtered = [d for d in data if d.get('term')]
-                if filtered:
-                    print(f"[INFO] Collected {len(filtered)} entries via JS (container={cont_sel}, term={term_sel})")
-                    return filtered
-            except Exception:
-                continue
-    # Fallback using alternate rank selectors
-    for rank_sel in SELECTORS["rank"][1:]:
-        for cont_sel in SELECTORS["container"]:
-            script = f"""
-            const items = Array.from(document.querySelectorAll('{cont_sel}'));
-            return items.slice(0, {limit}).map(item => {{
-              const termElem = item.querySelector('{SELECTORS['term'][0]}');
-              const term = termElem ? termElem.textContent.trim() : '';
-              const rankBox = item.querySelector('{rank_sel}');
-              let cur = 0, prev = 0;
-              if (rankBox) {{
-                const spans = rankBox.querySelectorAll('span');
-                if (spans.length >= 2) {{
-                  const c = spans[0].textContent.trim();
-                  const p = spans[1].textContent.trim();
-                  cur = /^\\d+$/.test(c) ? parseInt(c) : 0;
-                  prev = /^\\d+$/.test(p) ? parseInt(p) : 0;
-                }}
-              }}
-              return {{ term, cur, prev }};
-            }});
-            """
-            try:
-                data = driver.execute_script(script)
-                filtered = [d for d in data if d.get('term')]
-                if filtered:
-                    print(f"[INFO] Collected {len(filtered)} entries via fallback rank selector (container={cont_sel}, rank={rank_sel})")
-                    return filtered
-            except Exception:
-                continue
-    return []
-
-
-def run_scrape(keyword: str, max_items: int = 200, headless: bool = True) -> list[dict]:
-    """Core routine that returns a list of dictionaries ready for CSV export."""
-    browser = launch_browser(headless)
-    if not browser:
-        return []
-    try:
-        target = f"{BASE_URL}?k={keyword}"
-        print(f"[INFO] Opening {target}")
-        browser.get(target)
-        try:
-            WebDriverWait(browser, 15).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, SELECTORS["term"][0]))
-            )
-        except TimeoutException:
-            print("[WARN] Primary selector not found within timeout; proceeding anyway.")
-            time.sleep(5)
-        # Store a copy of the page for debugging
-        debug_path = os.path.join(os.path.dirname(__file__), "debug_page.html")
-        with open(debug_path, "w", encoding="utf-8") as dbg:
-            dbg.write(browser.page_source)
-        raw = harvest_keywords(browser, max_items)
-        if not raw:
-            print("[WARN] No data on first pass – scrolling then retrying.")
-            browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            time.sleep(3)
-            browser.execute_script("window.scrollTo(0, 0);")
-            time.sleep(2)
-            raw = harvest_keywords(browser, max_items)
-        results = []
-        for entry in raw:
-            cur = entry["cur"]
-            prev = entry["prev"]
-            results.append({
-                "search_term": entry["term"],
-                "current_rank": cur,
-                "last_rank": prev,
-                "trend": evaluate_trend(cur, prev),
-            })
-        print(f"[OK] Gathered {len(results)} keyword rows for '{keyword}'.")
-        return results
-    except Exception as exc:
-        print(f"[ERROR] Scrape failed: {exc}", file=sys.stderr)
-        return []
-    finally:
-        browser.quit()
-
-
-def dump_csv(rows: list[dict], keyword: str, out_dir: str) -> str | None:
-    if not rows:
-        print("[ERROR] No rows to write.")
-        return None
-    os.makedirs(out_dir, exist_ok=True)
-    safe_key = keyword.replace(" ", "_").replace("/", "_")
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    file_path = os.path.join(out_dir, f"amz123_hotwords_{safe_key}_{timestamp}.csv")
-    pd.DataFrame(rows).to_csv(file_path, index=False, encoding="utf-8")
-    print(f"[OK] CSV saved to {file_path}")
-    return file_path
-
-
-def cli():
-    parser = argparse.ArgumentParser(description="Fetch Amazon Brand Analytics hot‑keywords via AMZ123.")
-    parser.add_argument("--keyword", required=True, help="Primary search term, e.g. 'dog bed'")
-    parser.add_argument("--max-results", type=int, default=200, help="Maximum records to retrieve (default 200)")
-    parser.add_argument("--output-dir", default=".", help="Folder for the CSV output (default cwd)")
-    parser.add_argument("--headless", type=str, default="true", help="Run Chrome headless (true/false)")
-    args = parser.parse_args()
-    headless = args.headless.lower() == "true"
-    data = run_scrape(args.keyword, args.max_results, headless)
-    if not data:
-        sys.exit(1)
-    csv_file = dump_csv(data, args.keyword, args.output_dir)
-    # Provide a concise JSON payload for downstream agents
-    summary = {
-        "keyword": args.keyword,
-        "total": len(data),
-        "csv": csv_file,
-        "sample": data[:5],
+    "search_input": "input[name='keyword']",
+    "search_button": "button[type='submit']",
+    "row": "table tbody tr",
+    "cols": {
+        "search_term": "td:nth-child(1)",
+        "current_rank": "td:nth-child(2)",
+        "last_rank": "td:nth-child(3)"
     }
-    print("\n--- RESULT_JSON ---")
-    print(json.dumps(summary, ensure_ascii=False, indent=2))
+}
+BASE_URL = "https://www.amz123.com/usatopkeywords"
+MAX_RESULTS_LIMIT = 200
+# -------------------------------------------------------
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Scrape Amazon ABA hot keywords from AMZ123.")
+    parser.add_argument("--keyword", required=True, help="Base keyword to search for")
+    parser.add_argument("--max-results", type=int, default=MAX_RESULTS_LIMIT,
+                        help=f"Maximum number of keywords to collect (max {MAX_RESULTS_LIMIT})")
+    parser.add_argument("--output-dir", default=".", help="Directory to write the output file")
+    parser.add_argument("--format", choices=["csv", "json"], default="csv",
+                        help="Output format (csv or json)")
+    parser.add_argument("--headless", type=str, default="true",
+                        help="Run Chrome headlessly (true/false)")
+    return parser.parse_args()
+
+def init_driver(headless: bool):
+    options = Options()
+    if headless:
+        options.add_argument("--headless")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--window-size=1920,1080")
+    # Randomize user-agent to reduce bot detection
+    ua = (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
+        "(KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
+    )
+    options.add_argument(f"--user-agent={ua}")
+    driver = webdriver.Chrome(options=options)
+    driver.implicitly_wait(15)
+    return driver
+
+def scrape(driver, keyword, max_results):
+    driver.get(BASE_URL)
+    # Input keyword
+    try:
+        search_input = driver.find_element(By.CSS_SELECTOR, SELECTORS["search_input"])
+        search_input.clear()
+        search_input.send_keys(keyword)
+        # Submit search
+        search_button = driver.find_element(By.CSS_SELECTOR, SELECTORS["search_button"])
+        search_button.click()
+    except NoSuchElementException as e:
+        print(f"[ERROR] Search elements not found: {e}")
+        driver.quit()
+        sys.exit(1)
+
+    # Wait a bit for results to load
+    time.sleep(random.uniform(2, 4))
+
+    rows = driver.find_elements(By.CSS_SELECTOR, SELECTORS["row"])
+    data = []
+    for i, row in enumerate(rows):
+        if i >= max_results:
+            break
+        try:
+            term = row.find_element(By.CSS_SELECTOR, SELECTORS["cols"]["search_term"]).text.strip()
+            cur = row.find_element(By.CSS_SELECTOR, SELECTORS["cols"]["current_rank"]).text.strip()
+            last = row.find_element(By.CSS_SELECTOR, SELECTORS["cols"]["last_rank"]).text.strip()
+            cur_rank = int(cur) if cur.isdigit() else None
+            last_rank = int(last) if last.isdigit() else None
+            # Determine trend
+            if last_rank is None:
+                trend = "new"
+            elif cur_rank < last_rank:
+                trend = "up"
+            elif cur_rank > last_rank:
+                trend = "down"
+            else:
+                trend = "flat"
+            data.append({
+                "search_term": term,
+                "current_rank": cur_rank,
+                "last_rank": last_rank,
+                "trend": trend,
+            })
+        except Exception as e:
+            # Skip malformed rows
+            print(f"[WARN] Skipping row due to error: {e}")
+            continue
+    return data
+
+def write_output(data, output_dir, keyword, fmt):
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    safe_keyword = "_".join(keyword.strip().split())
+    filename = f"amz123_hotwords_{safe_keyword}_{timestamp}.{fmt}"
+    out_path = Path(output_dir) / filename
+    df = pd.DataFrame(data)
+    df = df.sort_values("current_rank")
+    if fmt == "csv":
+        df.to_csv(out_path, index=False)
+    else:
+        df.to_json(out_path, orient="records", force_ascii=False)
+    print(out_path.resolve())
+
+def main():
+    args = parse_args()
+    headless = args.headless.lower() != "false"
+    max_results = min(args.max_results, MAX_RESULTS_LIMIT)
+    driver = init_driver(headless)
+    try:
+        data = scrape(driver, args.keyword, max_results)
+    finally:
+        driver.quit()
+    if not data:
+        print("[ERROR] No data scraped. Exiting.")
+        sys.exit(1)
+    write_output(data, args.output_dir, args.keyword, args.format)
 
 if __name__ == "__main__":
-    cli()
+    main()
