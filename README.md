@@ -16,7 +16,7 @@ Some tools make you adopt their entire ecosystem to get value from one good idea
 
 ## Available Skills
 
-**10 skills currently available** (more being added regularly):
+**10 skills available now — more being added regularly.**
 
 ### Data & Analytics
 | Skill | What It Does |
@@ -39,6 +39,9 @@ Some tools make you adopt their entire ecosystem to get value from one good idea
 | `cj-dropshipping-api` | CJ Dropshipping V2 integration (products, orders, logistics, Shopify sync) |
 | `shopify-dev-mcp` | Shopify Admin/Storefront API, Liquid validation, GraphQL |
 | `creating-financial-models` | E-commerce DCF, sensitivity analysis, scenario planning |
+
+### Coming Soon
+`lark-tools`, `social-content`, `social-media-publisher`, `shopify-developer`, `alibaba-publish-skill`, `market-insight-product-selection`, `review-analyst-agent`, and more.
 
 ---
 
