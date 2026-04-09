@@ -1,111 +1,84 @@
 # open-accio-skill
 
-> Curated e-commerce Agent Skills, rewritten from scratch.  
-> Each skill is a self-contained workflow for cross-border e-commerce operators, researchers, and developers.
+E-commerce automation skills — standalone, no vendor lock-in.
 
 ---
 
-## 🎯 What Is This?
+## Why This Exists
 
-A community-driven, open-source collection of AI agent skills purpose-built for e-commerce.
+Some tools make you adopt their entire ecosystem to get value from one good idea. Accio had a genuinely useful concept — modular, workflow-oriented AI agent skills for e-commerce operators — but you had to live inside their app to use it.
 
-All skills are **rewritten from the ground up** — extracting core workflow logic without copying any existing IP. The goal: one repo where e-commerce professionals can find production-ready agent skills for every stage of the business.
+This repo takes the best e-commerce skills, rebuilds them to work as standalone OpenClaw skills, and publishes them here. Use them with OpenClaw, or adapt them for any agent framework. The idea is good; the delivery mechanism is optional.
 
 ---
 
-## 📦 Available Skills
+## What You Get
 
-### 🔴 High Priority
+Cross-border e-commerce workflows for: Amazon keyword research, tariff & HS code lookup, Taobao and Alibaba store analytics, product description generation, Shopify development, and more.
 
-| Skill | Description |
+Each skill is self-contained and runs against real platform APIs and data sources — no synthetic data, no toy examples.
+
+---
+
+## Skills
+
+### Data & Analytics
+
+| Skill | What It Does |
 |---|---|
-| `amz-hot-keywords` | Scrape Amazon ABA (AMZ123) weekly search term rankings |
-| `amz-product-optimizer` | End-to-end Amazon listing optimization (keywords → titles → AI images → CTR monitoring) |
-| `tariff-search` | HS code classification + landed cost calculation via TurtleClassify API |
-| `sycm-analysis-skill` | Taobao Sycm (生意参谋) weekly report extraction + structured analysis |
-| `alibaba-store-analysis` | Alibaba International weekly business report parser + diagnostic summary |
-| `etsy-pod-automation` | Etsy + Printify POD full automation (trend → design → list → social → monitor) |
-| `cj-dropshipping-api` | CJ Dropshipping V2 API deep dive (products, orders, logistics, Shopify integration) |
+| `amz-hot-keywords` | Scrape Amazon search rankings from AMZ123 (ABA data, weekly) |
+| `tariff-search` | HS code classification + landed cost calculation |
+| `sycm-analysis-skill` | Taobao store weekly report extraction |
+| `alibaba-store-analysis` | Alibaba International store weekly report |
 
-### 🟠 Medium Priority
+### Listing & Content
 
-| Skill | Description |
+| Skill | What It Does |
 |---|---|
-| `shopify-dev-mcp` | Shopify Dev MCP — Admin/Storefront API, Liquid, Polaris, Theme Check |
-| `shopify-developer` | Shopify GraphQL + App development assistant |
+| `product-description-generator` | SEO product descriptions across Amazon, Shopify, eBay, Etsy |
 | `alibaba-publish-skill` | Alibaba International product publishing workflow |
-| `product-description-generator` | Multi-platform SEO product descriptions (Amazon / Shopify / eBay / Etsy) |
-| `product-selection` | Data-driven product selection workflow |
-| `product-supplier-sourcing` | Supplier sourcing and verification |
-| `cross-border-selection` | Cross-border e-commerce product selection |
-| `market-insight-product-selection` | Market insight-driven product selection with charting |
-| `product-marketing-context` | Product marketing context generation |
-| `ecommerce-marketing` | E-commerce marketing strategy toolkit |
-| `launch-strategy` | New product launch playbook |
-| `review-analyst-agent` | Competitor review analysis |
-| `review-summarizer` | Review summarization + insight extraction |
-| `sales-negotiator` | B2B sales negotiation strategies |
 
-### 🟡 Operations & Tools
+### Platform Tools
 
-| Skill | Description |
+| Skill | What It Does |
 |---|---|
-| `social-content` | Social media content creation |
-| `social-media-publisher` | Social media scheduling + publishing |
-| `social-network-mapper` | Social network mapping |
-| `lark-tools` | Feishu/Lark integration toolkit |
-| `docx` | Word document generation |
-| `pdf` | PDF generation + processing |
-| `pptx` | PowerPoint generation |
-| `xlsx` | Excel data processing |
+| `shopify-dev-mcp` | Shopify Admin/Storefront API, Liquid validation |
+| `shopify-developer` | Shopify GraphQL and app development |
+| `cj-dropshipping-api` | CJ Dropshipping V2 integration (products, orders, logistics) |
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
-### Prerequisites
-
-- OpenClaw agent runtime (or any compatible agent framework)
-- Python 3.9+ (for skills with scripts)
-- Browser access (for scraping skills)
-- Platform API credentials as required per skill
-
-### Installation
+**Prerequisites:** OpenClaw agent runtime
 
 ```bash
-# Clone the repo
-git clone https://github.com/YOUR_USERNAME/open-accio-skill.git
-cd open-accio-skill
+# Install a skill
+clawhub install ./skills/amz-hot-keywords
 
-# Explore skills
-ls skills/
+# Use it — the agent picks it up automatically
+# "Check hot keywords for dog bed"
 ```
 
-### Usage
+Skills can also be used standalone via their scripts:
 
-Each skill lives in its own directory under `skills/`. Read the `SKILL.md` inside each skill for specific usage instructions.
+```bash
+python3 skills/amz-hot-keywords/scripts/amz_scraper.py --keyword "yoga mat"
+```
 
 ---
 
-## ⚖️ Legal & Contribution
+## Skill Structure
 
-- **License:** MIT (see `LICENSE`)
-- **Contribution:** All skills must be original rewrites — no copy-paste from proprietary sources
-- **Quality bar:** Every skill must be executable and tested before merging
+```
+skills/<name>/
+├── SKILL.md           # Skill definition + usage guide
+├── references/        # Detailed workflow docs (loaded on demand)
+└── scripts/          # Executable code (Python/Bash)
+```
 
 ---
 
-## 📂 Repo Structure
+## License
 
-```
-open-accio-skill/
-├── README.md
-├── LICENSE
-├── CLAUDE.md
-└── skills/
-    ├── amz-hot-keywords/
-    ├── amz-product-optimizer/
-    ├── tariff-search/
-    ├── sycm-analysis-skill/
-    └── ...
-```
+MIT — use freely, modify freely.
