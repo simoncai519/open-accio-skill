@@ -2,27 +2,21 @@
 
 E-commerce automation skills — standalone, no vendor lock-in.
 
+**Repository:** https://github.com/simoncai519/open-accio-skill
+
 ---
 
 ## Why This Exists
 
 Some tools make you adopt their entire ecosystem to get value from one good idea. Accio had a genuinely useful concept — modular, workflow-oriented AI agent skills for e-commerce operators — but you had to live inside their app to use it.
 
-This repo takes the best e-commerce skills, rebuilds them to work as standalone OpenClaw skills, and publishes them here. Use them with OpenClaw, or adapt them for any agent framework. The idea is good; the delivery mechanism is optional.
+This repo takes the best e-commerce skills, rebuilds them as standalone OpenClaw skills, and publishes them here. The idea is good; the delivery mechanism is optional.
 
 ---
 
-## What You Get
+## Available Skills
 
-Cross-border e-commerce workflows for: Amazon keyword research, tariff & HS code lookup, Taobao and Alibaba store analytics, product description generation, Shopify development, and more.
-
-Each skill is self-contained and runs against real platform APIs and data sources — no synthetic data, no toy examples.
-
----
-
-## Skills
-
-### Data & Analytics
+Currently available (4 of ~50 planned):
 
 | Skill | What It Does |
 |---|---|
@@ -31,36 +25,25 @@ Each skill is self-contained and runs against real platform APIs and data source
 | `sycm-analysis-skill` | Taobao store weekly report extraction |
 | `alibaba-store-analysis` | Alibaba International store weekly report |
 
-### Listing & Content
-
-| Skill | What It Does |
-|---|---|
-| `product-description-generator` | SEO product descriptions across Amazon, Shopify, eBay, Etsy |
-| `alibaba-publish-skill` | Alibaba International product publishing workflow |
-
-### Platform Tools
-
-| Skill | What It Does |
-|---|---|
-| `shopify-dev-mcp` | Shopify Admin/Storefront API, Liquid validation |
-| `shopify-developer` | Shopify GraphQL and app development |
-| `cj-dropshipping-api` | CJ Dropshipping V2 integration (products, orders, logistics) |
+More skills being added regularly.
 
 ---
 
 ## Quick Start
 
-**Prerequisites:** OpenClaw agent runtime
-
 ```bash
-# Install a skill
+# 1. Clone the repo
+git clone https://github.com/simoncai519/open-accio-skill.git
+cd open-accio-skill
+
+# 2. Install a skill (into your OpenClaw workspace)
 clawhub install ./skills/amz-hot-keywords
 
-# Use it — the agent picks it up automatically
+# 3. Use it
 # "Check hot keywords for dog bed"
 ```
 
-Skills can also be used standalone via their scripts:
+Skills also work standalone via their scripts:
 
 ```bash
 python3 skills/amz-hot-keywords/scripts/amz_scraper.py --keyword "yoga mat"
@@ -79,6 +62,12 @@ skills/<name>/
 
 ---
 
+## Philosophy
+
+These skills are rebuilt from the ground up — not forks, not mirrors. The goal is to make the workflow logic freely available regardless of which agent framework you use.
+
+---
+
 ## License
 
-MIT — use freely, modify freely.
+MIT — use freely, modify freely, no attribution required.
