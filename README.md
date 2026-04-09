@@ -16,7 +16,7 @@ This repo takes the best e-commerce skills, rebuilds them as standalone OpenClaw
 
 ## Available Skills
 
-Currently available (4 of ~50 planned):
+Currently available (7 of ~50 planned):
 
 | Skill | What It Does |
 |---|---|
