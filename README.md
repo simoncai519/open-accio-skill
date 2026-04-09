@@ -2,16 +2,17 @@
 
 E-commerce automation skills — standalone, no vendor lock-in.
 
+The idea of Accio is cool, but why need another agent?
+
 **Repository:** https://github.com/simoncai519/open-accio-skill
 
 ---
 
 ## Why This Exists
 
-Some tools make you adopt their entire ecosystem to get value from one good idea. Accio had a genuinely useful concept — modular, workflow-oriented AI agent skills for e-commerce operators — but you had to live inside their app to use it.
+Some tools make you adopt their entire ecosystem to get value from one good idea. Accio had a genuinely useful concept — modular, workflow-oriented AI agent skills for e-commerce operators — but you had to live inside their app to use it. 
 
-This repo takes the best e-commerce skills, rebuilds them as standalone OpenClaw skills, and publishes them here. The idea is good; the delivery mechanism is optional.
-
+This repo takes the best e-commerce skills, rebuilds them as standalone OpenClaw skills, and publishes them here.
 ---
 
 ## Available Skills
