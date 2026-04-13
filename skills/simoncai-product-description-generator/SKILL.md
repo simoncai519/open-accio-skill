@@ -1,8 +1,10 @@
 ---
-name: product-description-generator
+name: simoncai-product-description-generator
 description: |
   Use when user wants to create product descriptions, SEO copy, Amazon listings, eBay item descriptions, Etsy listing copy, Shopify product pages, or any e‑commerce marketplace copy. Generates conversion‑focused, keyword‑rich copy tailored to the target platform.
+version: "1.0.0"
 ---
+
 
 # Product Description Generator
 

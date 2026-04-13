@@ -1,7 +1,9 @@
 ---
 name: amz-hot-keywords
 description: "Scrape Amazon Brand Analytics (ABA) weekly hot keyword rankings from AMZ123 and return structured keyword trend data. Use when the user asks about Amazon keyword rankings, hot search terms, keyword trends, ABA data, or wants a CSV/JSON of popular Amazon search terms. Trigger phrases include: 'hot keywords', 'search term rank', 'keyword trend', 'Amazon keyword', 'ABA data', '热搜词', '关键词排名', '关键词趋势'."
+version: "1.0.0"
 ---
+
 
 # Amazon Hot Keywords Skill
 

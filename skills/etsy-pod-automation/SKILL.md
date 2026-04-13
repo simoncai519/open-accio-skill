@@ -2,7 +2,9 @@
 name: etsy-pod-automation
 description: >
   Use when user wants to run Etsy POD store, Printify integration, automate Etsy listings, generate POD designs, manage SEO tags, or schedule social media promotion for Etsy products.
+version: "1.0.0"
 ---
+
 
 # Etsy POD Automation Skill
 

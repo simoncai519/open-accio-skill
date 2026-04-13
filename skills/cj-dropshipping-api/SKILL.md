@@ -2,7 +2,9 @@
 name: cj-dropshipping-api
 description: >
   Use when user wants to integrate CJ Dropshipping, search products, create orders, track shipments, manage Shopify listings via CJ, or automate CJ logistics and webhook setups. Triggered for CJ API related tasks like product queries, order creation, shipping calculations, delivery profile management, and webhook configuration.
+version: "1.0.0"
 ---
+
 
 # CJ Dropshipping API Skill
 

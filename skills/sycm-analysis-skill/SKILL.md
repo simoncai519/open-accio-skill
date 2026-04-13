@@ -2,7 +2,9 @@
 name: sycm-analysis-skill
 description: |
   Taobao Sycm (Business Advisor) data analysis tool. Use when the user wants to retrieve a store's weekly business report, generate business insights, or fetch Sycm data for a Taobao store. Requires the user to be logged into sycm.taobao.com.
+version: "1.0.0"
 ---
+
 
 # Sycm Analysis Skill
 

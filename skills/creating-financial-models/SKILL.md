@@ -1,7 +1,9 @@
 ---
 name: creating-financial-models
 description: Use when user wants to build financial models, DCF analysis, valuation, sensitivity analysis, e-commerce business planning, investment decisions, or project finance assessments.
+version: "1.0.0"
 ---
+
 
 # Creating Financial Models
 

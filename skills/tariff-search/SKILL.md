@@ -8,7 +8,9 @@ description: |
     - Landed cost calculation, tax implications for sourcing
     - Batch process product lists for tariff information
 enabled: true
+version: "1.0.0"
 ---
+
 
 # Tariff Search Skill
 

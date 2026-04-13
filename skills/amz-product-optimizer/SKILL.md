@@ -2,7 +2,9 @@
 name: amz-product-optimizer
 description: |
   Use when user wants to optimize Amazon product listings, generate product images, improve titles, monitor CTR, or automate end-to-end Amazon product optimization workflows.
+version: "1.0.0"
 ---
+
 
 # Amazon Product Optimizer (AMZ Product Optimizer)
 

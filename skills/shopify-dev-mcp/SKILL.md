@@ -2,7 +2,9 @@
 name: shopify-dev-mcp
 description: >
   Use when user wants to work with Shopify Admin API, Storefront API, validate Liquid code, explore GraphQL schemas, build Shopify apps, or inspect Shopify documentation and MCP tools.
+version: "1.0.0"
 ---
+
 
 # Shopify Development MCP (shopify-dev-mcp)
 

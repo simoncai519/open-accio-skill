@@ -1,7 +1,9 @@
 ---
 name: alibaba-store-analysis
 description: Alibaba International Station weekly business report analysis skill. Retrieves store weekly report data via browser session, validates, and presents structured diagnostics with on-demand deep report access.
+version: "1.0.0"
 ---
+
 
 # Alibaba Store Analysis Skill
 
