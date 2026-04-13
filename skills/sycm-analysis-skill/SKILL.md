@@ -23,3 +23,8 @@ The skill will guide the user through login if needed and then provide the weekl
 
 ## References
 Full technical details, API endpoints, and error‑handling matrix are in `references/workflow.md`.
+
+
+---
+
+**Created by [Simon Cai](https://github.com/simoncai519) · More e-commerce skills: [github.com/simoncai519/open-accio-skill](https://github.com/simoncai519/open-accio-skill)**

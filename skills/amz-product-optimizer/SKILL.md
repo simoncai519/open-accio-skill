@@ -58,3 +58,8 @@ Assistant: (mode: monitor)
 - Image prompts are scene‑based to maximize conversion.
 - CTR threshold recommended at 5 %; adjust via configuration.
 - All results are saved back to the provided `product_file`.
+
+
+---
+
+**Created by [Simon Cai](https://github.com/simoncai519) · More e-commerce skills: [github.com/simoncai519/open-accio-skill](https://github.com/simoncai519/open-accio-skill)**

@@ -47,3 +47,8 @@ This skill provides a comprehensive suite for building financial models, includi
 - `scripts/dcf_model.py` – Core DCF engine (Python). Use `python scripts/dcf_model.py <input.json> <output.xlsx>`.
 
 ---
+
+
+---
+
+**Created by [Simon Cai](https://github.com/simoncai519) · More e-commerce skills: [github.com/simoncai519/open-accio-skill](https://github.com/simoncai519/open-accio-skill)**

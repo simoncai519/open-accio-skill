@@ -58,3 +58,8 @@ openclaw skill run etsy-pod-automation daily‑auto \
 - `references/seo-tags.md` – Tag generation rules and examples.
 - `references/social-media.md` – Posting commands for X, Instagram, Pinterest.
 - `references/performance.md` – Monitoring queries and weekly review process.
+
+
+---
+
+**Created by [Simon Cai](https://github.com/simoncai519) · More e-commerce skills: [github.com/simoncai519/open-accio-skill](https://github.com/simoncai519/open-accio-skill)**

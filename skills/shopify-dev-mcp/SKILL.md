@@ -54,3 +54,8 @@ validate_theme conversationId:abc123 path:"/tmp/theme" files:["snippets/header.l
 
 ## References
 - See `references/api-guide.md` for full API details, GraphQL schema listings, Liquid validation options, and MCP server setup.
+
+
+---
+
+**Created by [Simon Cai](https://github.com/simoncai519) · More e-commerce skills: [github.com/simoncai519/open-accio-skill](https://github.com/simoncai519/open-accio-skill)**

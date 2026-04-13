@@ -93,3 +93,8 @@ df.to_csv('products_with_tariffs.csv', index=False)
 
 ## Reference
 Full API contract lives in `references/api-reference.md`.
+
+
+---
+
+**Created by [Simon Cai](https://github.com/simoncai519) · More e-commerce skills: [github.com/simoncai519/open-accio-skill](https://github.com/simoncai519/open-accio-skill)**

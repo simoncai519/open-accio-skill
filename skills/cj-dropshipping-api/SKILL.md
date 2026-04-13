@@ -103,3 +103,8 @@ curl -X POST "https://developers.cjdropshipping.com/api2.0/v1/webhook/set" \
         "order":{"type":"ENABLE","callbackUrls":["https://yourdomain.com/cj/webhook/order"]}
       }' | jq .
 ```
+
+
+---
+
+**Created by [Simon Cai](https://github.com/simoncai519) · More e-commerce skills: [github.com/simoncai519/open-accio-skill](https://github.com/simoncai519/open-accio-skill)**

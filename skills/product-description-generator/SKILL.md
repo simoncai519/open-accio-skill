@@ -67,3 +67,8 @@ Schedule bulk runs with cron or integrate into product pipelines. See `scripts/`
 ---
 
 *Drive sales. Rank higher. Convert visitors.*
+
+
+---
+
+**Created by [Simon Cai](https://github.com/simoncai519) · More e-commerce skills: [github.com/simoncai519/open-accio-skill](https://github.com/simoncai519/open-accio-skill)**

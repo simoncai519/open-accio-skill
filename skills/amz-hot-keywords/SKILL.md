@@ -43,3 +43,8 @@ python3 $(pwd)/scripts/amz_scraper.py \
 The scraper implementation lives in `scripts/amz_scraper.py`.
 
 ---
+
+
+---
+
+**Created by [Simon Cai](https://github.com/simoncai519) · More e-commerce skills: [github.com/simoncai519/open-accio-skill](https://github.com/simoncai519/open-accio-skill)**

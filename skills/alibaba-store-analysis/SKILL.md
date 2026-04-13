@@ -27,3 +27,8 @@ openclaw run alibaba-store-analysis
 The skill will guide the user through any required login steps and then output the analysis automatically.
 
 For the complete step‑by‑step workflow, API payloads, error handling and module explanations, see `references/workflow.md`.
+
+
+---
+
+**Created by [Simon Cai](https://github.com/simoncai519) · More e-commerce skills: [github.com/simoncai519/open-accio-skill](https://github.com/simoncai519/open-accio-skill)**
