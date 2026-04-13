@@ -1,5 +1,5 @@
 ---
-name: simoncai-twitter-post
+name: open-accio-twitter-post
 description: Post tweets to Twitter/X via the official API v2 (OAuth 1.0a). Use when the user asks to tweet, post to Twitter/X, send a thread, reply to a tweet, or quote tweet. Supports single tweets, threads, replies, and quote tweets with automatic character weight validation.
 version: "1.0.0"
 ---
